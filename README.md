@@ -1,5 +1,5 @@
 
-# ggpage
+# ggpage <img src='man/figures/logo.png' align="right" height="139" />
 
 [![Travis build
 status](https://travis-ci.org/EmilHvitfeldt/ggpage.svg?branch=master)](https://travis-ci.org/EmilHvitfeldt/ggpage)
@@ -7,9 +7,11 @@ status](https://travis-ci.org/EmilHvitfeldt/ggpage.svg?branch=master)](https://t
 status](https://ci.appveyor.com/api/projects/status/github/EmilHvitfeldt/ggpage?branch=master&svg=true)](https://ci.appveyor.com/project/EmilHvitfeldt/ggpage)
 [![Coverage
 status](https://codecov.io/gh/EmilHvitfeldt/ggpage/branch/master/graph/badge.svg)](https://codecov.io/github/EmilHvitfeldt/ggpage?branch=master)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/ggpage)](https://cran.r-project.org/package=ggpage)
 
-`ggpage` is a package to create pagestyled visualizations of text based
-data. It uses ggplot2 and final returns are ggplot2 objects.
+**ggpage** is a package to create pagestyled visualizations of text
+based data. It uses ggplot2 and final returns are ggplot2 objects.
 
 ## Version 0.2.0
 
@@ -19,7 +21,15 @@ in the vignette.
 
 ## Installation
 
-You can install ggpage from github with:
+You can install the released version of **ggpage** from
+[CRAN](https://cran.r-project.org/) with:
+
+``` r
+install.packages("ggpage")
+```
+
+or you can install the developmental version of **ggpage** from github
+with:
 
 ``` r
 # install.packages("devtools")
@@ -32,25 +42,27 @@ The package includes The Tinder-box by H.C. Andersen for examples.
 
 ``` r
 library(tidyverse)
+#> Warning: replacing previous import 'dplyr::vars' by 'rlang::vars' when
+#> loading 'dbplyr'
 library(ggpage)
 
 head(tinderbox, 10)
-## # A tibble: 10 x 2
-##    text                                                       book        
-##    <chr>                                                      <chr>       
-##  1 "A soldier came marching along the high road: \"Left, rig… The tinder-…
-##  2 had his knapsack on his back, and a sword at his side; he… The tinder-…
-##  3 and was now returning home. As he walked on, he met a ver… The tinder-…
-##  4 witch in the road. Her under-lip hung quite down on her b… The tinder-…
-##  5 "and said, \"Good evening, soldier; you have a very fine … The tinder-…
-##  6 knapsack, and you are a real soldier; so you shall have a… The tinder-…
-##  7 "you like.\""                                              The tinder-…
-##  8 "\"Thank you, old witch,\" said the soldier."              The tinder-…
-##  9 "\"Do you see that large tree,\" said the witch, pointing… The tinder-…
-## 10 "beside them. \"Well, it is quite hollow inside, and you … The tinder-…
+#> # A tibble: 10 x 2
+#>    text                                                        book        
+#>    <chr>                                                       <chr>       
+#>  1 "A soldier came marching along the high road: \"Left, righ… The tinder-…
+#>  2 had his knapsack on his back, and a sword at his side; he … The tinder-…
+#>  3 and was now returning home. As he walked on, he met a very… The tinder-…
+#>  4 witch in the road. Her under-lip hung quite down on her br… The tinder-…
+#>  5 "and said, \"Good evening, soldier; you have a very fine s… The tinder-…
+#>  6 knapsack, and you are a real soldier; so you shall have as… The tinder-…
+#>  7 "you like.\""                                               The tinder-…
+#>  8 "\"Thank you, old witch,\" said the soldier."               The tinder-…
+#>  9 "\"Do you see that large tree,\" said the witch, pointing … The tinder-…
+#> 10 "beside them. \"Well, it is quite hollow inside, and you m… The tinder-…
 ```
 
-The basic workflow with ggpage is using either
+The basic workflow with **ggpage** is using either
 
   - `ggpage_quick` for a quick one function call plot or,
   - combining `ggpage_build` and `ggpage_plot` to do analysis (NLP for
@@ -62,9 +74,11 @@ in a column named “text”.
 
 ``` r
 ggpage_quick(tinderbox)
+#> Warning: replacing previous import 'dplyr::vars' by 'rlang::vars' when
+#> loading 'tidytext'
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="672" />
+![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
 
@@ -95,33 +109,4 @@ tinderbox %>%
                     name = "Word length")
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="672" />
-
-And it will work nicely with other tidyverse packages
-
-``` r
-library(ggpage)
-library(purrr)
-library(gganimate)
-
-prebuild <- tinderbox %>%
-  ggpage_build() %>%
-  left_join(get_sentiments("afinn"), by = "word") 
-
-midbuild <- map_df(.x = 0:50 * 10 + 1,
-                   ~ prebuild %>% 
-                    mutate(score = ifelse(is.na(score), 0, score), 
-                           score_smooth = zoo::rollmean(score, .x, 0),
-                           score_smooth = score_smooth / max(score_smooth),
-                           rolls = .x))
-
-p <- midbuild %>%
-  ggpage_plot(aes(fill = score_smooth, frame = rolls)) +
-  scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0) +
-  guides(fill = "none") +
-  labs(title = "Smoothed sentiment of The Tinder-box, rolling average of")
-
-gganimate(p, interval = .2)
-```
-
-![](man/figures/README-gif.gif)
+![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
